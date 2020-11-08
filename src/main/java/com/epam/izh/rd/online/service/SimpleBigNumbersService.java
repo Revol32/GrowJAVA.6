@@ -3,6 +3,7 @@ package com.epam.izh.rd.online.service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.stream.IntStream;
 
 public class SimpleBigNumbersService implements BigNumbersService {
 
@@ -28,6 +29,15 @@ public class SimpleBigNumbersService implements BigNumbersService {
      */
     @Override
     public BigInteger getPrimaryNumber(int range) {
-        return null;
+        return BigInteger.valueOf(IntStream.range(2, 10_000_000).filter(this::isPrimary).skip(range-1).findFirst().getAsInt());
+    }
+
+    public boolean isPrimary(int number) {
+        for (int i = 2; i < number/2; i++) {
+            if (number % i == 0) {
+                return false;
+            }
+        }
+        return true;
     }
 }
