@@ -1,5 +1,8 @@
 package com.epam.izh.rd.online.repository;
 
+import java.io.File;
+import java.util.Objects;
+
 public class SimpleFileRepository implements FileRepository {
 
     /**
@@ -10,7 +13,19 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countFilesInDirectory(String path) {
-        return 0;
+        File dir = new File(path);
+        long count = 0;
+        if (!dir.isDirectory()) {
+            return count;
+        }
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            if (file.isDirectory()) {
+                count += countFilesInDirectory(file.getPath());
+            } else {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -21,7 +36,18 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public long countDirsInDirectory(String path) {
-        return 0;
+        File dir = new File(path);
+        long count = 0;
+        if (!dir.isDirectory()) {
+            return count;
+        }
+        for (File file : Objects.requireNonNull(dir.listFiles())) {
+            if (file.isDirectory()) {
+                count++;
+                count += countDirsInDirectory(file.getPath());
+            }
+        }
+        return count+1;
     }
 
     /**
@@ -32,7 +58,7 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public void copyTXTFiles(String from, String to) {
-        return;
+
     }
 
     /**
