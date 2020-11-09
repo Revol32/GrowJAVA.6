@@ -40,14 +40,15 @@ public class SimpleFileRepository implements FileRepository {
         long count = 0;
         if (!dir.isDirectory()) {
             return count;
+        }else {
+            count++;
         }
         for (File file : Objects.requireNonNull(dir.listFiles())) {
             if (file.isDirectory()) {
-                count++;
                 count += countDirsInDirectory(file.getPath());
             }
         }
-        return count+1;
+        return count;
     }
 
     /**
