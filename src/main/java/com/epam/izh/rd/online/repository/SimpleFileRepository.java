@@ -1,6 +1,7 @@
 package com.epam.izh.rd.online.repository;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 public class SimpleFileRepository implements FileRepository {
@@ -14,6 +15,9 @@ public class SimpleFileRepository implements FileRepository {
     @Override
     public long countFilesInDirectory(String path) {
         File dir = new File(path);
+        if (!(dir.isDirectory()||dir.isFile())) {
+            dir = new File(getClass().getResource("/" + path).getPath());
+        }
         long count = 0;
         if (!dir.isDirectory()) {
             return count;
@@ -37,10 +41,13 @@ public class SimpleFileRepository implements FileRepository {
     @Override
     public long countDirsInDirectory(String path) {
         File dir = new File(path);
+        if (!(dir.isDirectory()||dir.isFile())) {
+            dir = new File(getClass().getResource("/" + path).getPath());
+        }
         long count = 0;
-        if (!dir.isDirectory()) {
+        if (!dir.isDirectory()){
             return count;
-        }else {
+        }else{
             count++;
         }
         for (File file : Objects.requireNonNull(dir.listFiles())) {
@@ -59,6 +66,16 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public void copyTXTFiles(String from, String to) {
+   /*    File fromFile = new File(from);
+        try {
+            InputStream in = new BufferedInputStream(new FileInputStream(fromFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String test1 = fromFile.getName();
+        String test2 = fromFile.getParent();
+        System.out.println();*/
+
 
     }
 
@@ -71,7 +88,25 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public boolean createFile(String path, String name) {
-        return false;
+        Boolean tester = null;
+        String root = new File("").getAbsolutePath();
+        File dir = new File(root+"/"+path);
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
+        if (!name.endsWith(".txt")){
+            name=name+".txt";
+        }
+        File file = new File(dir+"/"+name);
+        if (file.exists()){
+            file.delete();
+        }
+        try {
+            tester =  file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return tester;
     }
 
     /**
