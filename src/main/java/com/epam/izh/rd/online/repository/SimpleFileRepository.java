@@ -1,6 +1,7 @@
 package com.epam.izh.rd.online.repository;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -88,25 +89,18 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public boolean createFile(String path, String name) {
-        Boolean tester = null;
-        String root = new File("").getAbsolutePath();
-        File dir = new File(root+"/"+path);
-        if (!dir.exists()){
-            dir.mkdirs();
-        }
+        ClassLoader classLoader = this.getClass().getClassLoader();
+        String resource = Objects.requireNonNull(classLoader.getResource("")).getPath()+path;
         if (!name.endsWith(".txt")){
-            name=name+".txt";
+            name+=".txt";
         }
-        File file = new File(dir+"/"+name);
-        if (file.exists()){
-            file.delete();
-        }
+        File file = new File(resource,name);
         try {
-            tester =  file.createNewFile();
+            return file.createNewFile();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-        return tester;
     }
 
     /**
@@ -117,6 +111,15 @@ public class SimpleFileRepository implements FileRepository {
      */
     @Override
     public String readFileFromResources(String fileName) {
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        try(FileReader reader = new FileReader(new File("src/main/resources",fileName))){
+            while(reader.ready()){
+                stringBuilder.append((char) reader.read());
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
     }
 }
